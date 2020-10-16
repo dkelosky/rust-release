@@ -43,7 +43,9 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: repo
-        path: /
+        path:
+          src/
+          Cargo.toml
 
   build:
 
@@ -61,7 +63,6 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: repo
-        path: /
 
     - name: Download Release URL File
       uses: actions/download-artifact@v1
