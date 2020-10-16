@@ -25,7 +25,7 @@ jobs:
       run: cargo test --verbose
 
     - name: Get version
-      run: echo '::set-output name=SELECTED_COLOR::green'
+      run: echo '::set-output name=ZOWE2_VERSION::green'
       # run: ":::set-output name=ZOWE2_VERSION::cargo pkgid | cut -d# -f2 | cut -d: -f2"
       id: get-version
 
