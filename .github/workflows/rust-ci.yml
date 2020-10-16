@@ -41,6 +41,9 @@ jobs:
         path: release_url.txt
 
     - uses: actions/upload-artifact@v2
+      with:
+        name: repo
+        path: /
 
   build:
 
@@ -56,6 +59,9 @@ jobs:
     steps:
 
     - uses: actions/download-artifact@v2
+      with:
+        name: repo
+        path: /
 
     - name: Download Release URL File
       uses: actions/download-artifact@v1
