@@ -85,7 +85,7 @@ jobs:
     - run: "ls -la"
 
     - name: Zip
-      run: zip --junk-paths zowe2 target/release
+      run: zip -r --junk-paths zowe2.zip target/release/
 
     - name: Upload Release Asset
       id: upload-release-asset
