@@ -5,10 +5,46 @@ on:
   pull_request:
 
 jobs:
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get version
+      run: "echo ::set-output name=ZOWE2_VERSION::$(cargo pkgid | cut -d# -f2 | cut -d: -f2)"
+      id: get-version
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ steps.get-version.outputs.ZOWE2_VERSION }}
+        release_name: Release ${{ steps.get-version.outputs.ZOWE2_VERSION }}
+        body: |
+          Changes in this Release
+          - First Change
+        draft: false
+        prerelease: false
+
+    - name: Output Release URL File
+      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+
+    - name: Save Release URL File
+      uses: actions/upload-artifact@v2
+      with:
+        name: release_url
+        path: release_url.txt
+
+    - uses: actions/upload-artifact@v2
+
   build:
 
-    # runs-on: ${{ matrix.os }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
@@ -16,7 +52,17 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
+
+    - uses: actions/download-artifact@v2
+
+    - name: Download Release URL File
+      uses: actions/download-artifact@v1
+      with:
+        name: release_url
+        path: release_url.txt
+
+    - name: "echo ::set-output name=upload_url::$(cat release_url.txt)"
+      id: get-release-url
 
     - name: Build
       run: cargo build --verbose --release
@@ -24,39 +70,16 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
-    - name: Get version
-      # run: echo '::set-output name=ZOWE2_VERSION::green'
-      run: "echo ::set-output name=ZOWE2_VERSION::$(cargo pkgid | cut -d# -f2 | cut -d: -f2)"
-      id: get-version
+    - name: Zip
+      run: zip --junk-paths zowe2 target/release
 
-    - name: Get color
-      run: echo "The selected color is ${{ steps.get-version.outputs.ZOWE2_VERSION }}"
-
-    # - name: Zip
-    #   run: zip --junk-paths zowe2 target/release
-
-    # - name: Create Release
-    #   id: create_release
-    #   uses: actions/create-release@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-    #   with:
-    #     tag_name: ${{ steps.get-version.outputs.ZOWE2_VERSION }}
-    #     release_name: Release ${{ steps.get-version.outputs.ZOWE2_VERSION }}
-    #     body: |
-    #       Changes in this Release
-    #       - First Change
-    #       - Second Change
-    #     draft: false
-    #     prerelease: false
-
-    # - name: Upload Release Asset
-    #   id: upload-release-asset
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-    #     asset_path: ./zowe2.zip
-    #     asset_name: ${{ matrix.os }}-zowe2.zip
-    #     asset_content_type: application/zip
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get-release-url.upload_url }}
+        asset_path: ./zowe2.zip
+        asset_name: ${{ matrix.os }}-zowe2.zip
+        asset_content_type: application/zip
