@@ -26,7 +26,7 @@ jobs:
 
     - name: Get version
       # run: echo '::set-output name=ZOWE2_VERSION::green'
-      run: "::set-output name=ZOWE2_VERSION::cargo pkgid | cut -d# -f2 | cut -d: -f2"
+      run: "echo ::set-output name=ZOWE2_VERSION::$(cargo pkgid | cut -d# -f2 | cut -d: -f2)"
       id: get-version
 
     - name: Get color
