@@ -40,6 +40,8 @@ jobs:
         name: release_url
         path: release_url.txt
 
+    - run: "ls -la"
+
     - uses: actions/upload-artifact@v2
       with:
         name: repo
@@ -63,6 +65,8 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: repo
+
+    - run: "ls -la"
 
     - name: Download Release URL File
       uses: actions/download-artifact@v1
