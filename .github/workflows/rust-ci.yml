@@ -45,9 +45,8 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: repo
-        path:
-          src/
-          Cargo.toml
+        path: |
+          /**
 
   build:
 
