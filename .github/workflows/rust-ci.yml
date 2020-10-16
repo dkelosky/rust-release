@@ -82,7 +82,7 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
-    - run: "ls -la"
+    # - run: "ls -la"
 
     - name: Zip
       run: zip -r --junk-paths zowe2.zip target/release/
