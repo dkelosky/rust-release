@@ -31,8 +31,8 @@ jobs:
         draft: false
         prerelease: false
 
-    # - name: Output Release URL File
-    #   run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+    - name: Output Release URL File
+      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
 
     # - name: Save Release URL File
     #   uses: actions/upload-artifact@v2
