@@ -23,6 +23,13 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
+    - name: Get version
+      run: ":::set-output name=ZOWE2_VERSION::cargo pkgid | cut -d# -f2 | cut -d: -f2"
+      id: get-version
+
+    - name: Get color
+      run: echo "The selected color is ${{ steps.get-version.outputs.ZOWE2_VERSION }}"
+
     - name: Zip
       run: zip --junk-paths zowe2 target/release
 
