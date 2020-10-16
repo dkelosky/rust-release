@@ -44,6 +44,8 @@ jobs:
 
   build:
 
+    needs: release
+
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -61,7 +63,8 @@ jobs:
         name: release_url
         path: release_url.txt
 
-    - name: "echo ::set-output name=upload_url::$(cat release_url.txt)"
+    - name: Get Release URL
+      run: "echo ::set-output name=upload_url::$(cat release_url.txt)"
       id: get-release-url
 
     - name: Build
