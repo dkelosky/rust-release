@@ -82,13 +82,14 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
-    - name: Name executable
+    - name: Name Executable (Windows)
       if: matrix.os == "windows-latest"
-      env:
-          EXECUTABLE: zowe2.exe
+      run: echo "EXECUTABLE=zowe2.exe" >> $GITHUB_ENV
 
-    - name: Name executable
+    - name: Name Executable (Non-Windows)
       if: matrix.os != "windows-latest"
+      run: echo "EXECUTABLE=zowe2" >> $GITHUB_ENV
+
       env:
           EXECUTABLE: zowe2
 
