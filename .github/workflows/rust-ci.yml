@@ -98,7 +98,7 @@ jobs:
         echo "EXECUTABLE=zowe2" >> $GITHUB_ENV
         echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
 
-    - run: ech "$EXECUTABLE"
+    - run: echo "$EXECUTABLE"
 
     # - name: Zip
       # run: zip -r --junk-paths zowe2.zip target/release/
