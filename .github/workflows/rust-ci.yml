@@ -98,6 +98,8 @@ jobs:
         echo "EXECUTABLE=zowe2" >> $GITHUB_ENV
         echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
 
+    - run: ech "$EXECUTABLE"
+
     # - name: Zip
       # run: zip -r --junk-paths zowe2.zip target/release/
 
@@ -108,6 +110,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: $RELEASE_URL
-        asset_path: ./target/release/${EXECUTABLE}
-        asset_name: ${{ matrix.os }}-${EXECUTABLE}
+        asset_path: "./target/release/${EXECUTABLE}"
+        asset_name: "${{ matrix.os }}-${EXECUTABLE}"
         asset_content_type: application/octet-stream
