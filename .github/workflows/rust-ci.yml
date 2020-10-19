@@ -89,17 +89,14 @@ jobs:
     - name: Name Executable (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        "echo ::set-env name=EXECUTABLE::zowe2.exe"
-        "echo ::set-env name=RELEASE_URL::$(type release_url.txt)"
+        echo ::set-env name=EXECUTABLE::zowe2.exe
+        echo ::set-env name=RELEASE_URL::$(type release_url.txt)
 
     - name: Name Executable (Non-Windows)
       if: matrix.os != 'windows-latest'
       run: |
-        "echo ::set-env name=EXECUTABLE::zowe2"
-        "echo ::set-env name=RELEASE_URL::$(cat release_url.txt)"
-
-      env:
-          EXECUTABLE: zowe2
+        echo ::set-env name=EXECUTABLE::zowe2
+        echo ::set-env name=RELEASE_URL::$(cat release_url.txt)
 
     # - name: Zip
       # run: zip -r --junk-paths zowe2.zip target/release/
