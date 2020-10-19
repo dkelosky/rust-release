@@ -72,9 +72,9 @@ jobs:
     #     name: release_url
     #     path: release_url.txt
 
-    - name: Get Release URL
-      run: "echo ::set-output name=upload_url::$(cat release_url.txt)"
-      id: get-release-url
+    # - name: Get Release URL
+    #   run: "echo ::set-output name=upload_url::$(cat release_url.txt)"
+    #   id: get-release-url
 
     - name: Build
       run: cargo build --verbose --release
@@ -82,13 +82,21 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
+    # - name: Set Release URL
+    #   run: "echo ::set-output name=executable_name::$(cat release_url.txt)"
+    #   id: name-executable
+
     - name: Name Executable (Windows)
       if: matrix.os == 'windows-latest'
-      run: echo "EXECUTABLE=zowe2.exe" >> $GITHUB_ENV
+      run: |
+        "echo ::set-env name=EXECUTABLE::zowe2.exe"
+        "echo ::set-env name=RELEASE_URL::$(type release_url.txt)"
 
     - name: Name Executable (Non-Windows)
       if: matrix.os != 'windows-latest'
-      run: echo "EXECUTABLE=zowe2" >> $GITHUB_ENV
+      run: |
+        "echo ::set-env name=EXECUTABLE::zowe2"
+        "echo ::set-env name=RELEASE_URL::$(cat release_url.txt)"
 
       env:
           EXECUTABLE: zowe2
@@ -102,7 +110,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get-release-url.outputs.upload_url }}
+        upload_url: ${{ RELEASE_URL }}
         asset_path: ./target/release/$EXECUTABLE
         asset_name: ${{ matrix.os }}-$EXECUTABLE
-        asset_content_type: application/zip
+        asset_content_type: application/octet-stream
