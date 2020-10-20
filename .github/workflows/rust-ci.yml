@@ -91,17 +91,20 @@ jobs:
       run: |
         echo "EXECUTABLE=zowe2.exe" >> $GITHUB_ENV
         echo "RELEASE_URL=$(type release_url.txt)" >> $GITHUB_ENV
+        dir
 
     - name: Name Executable (Non-Windows)
       if: matrix.os != 'windows-latest'
       run: |
         echo "EXECUTABLE=zowe2" >> $GITHUB_ENV
         echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
+        ls -la
 
     - run: echo "$EXECUTABLE"
 
-    - run: echo "EXECUTABLE_PATH=./target/release/${EXECUTABLE}" >> $GITHUB_ENV
+    - run: echo "EXECUTABLE_PATH=target/release/${EXECUTABLE}" >> $GITHUB_ENV
     - run: echo "$EXECUTABLE_PATH"
+
 
     # - name: Zip
       # run: zip -r --junk-paths zowe2.zip target/release/
