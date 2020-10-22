@@ -1,7 +1,6 @@
 name: Rust CI
 
 on:
-  push:
   pull_request:
 
 jobs:
@@ -24,10 +23,3 @@ jobs:
 
     - name: Run tests
       run: cargo test --verbose
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: repo
-        path: |
-          **
-          !.git
