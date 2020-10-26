@@ -74,22 +74,23 @@ jobs:
 
     - name: Name Executable (Windows)
       if: matrix.os == 'windows-latest'
+      id: get_release_info_windows
       run: |
         echo "EXECUTABLE=rust-release.exe" >> $GITHUB_ENV
+        echo "RELEASE_URL=$(type release_url.txt)" >> $GITHUB_ENV
         dir
         dir target\release
+        echo ::set-output name=upload_url::$RELEASE_URL
 
     - name: Name Executable (Non-Windows)
       if: matrix.os != 'windows-latest'
+      id: get_release_info_ubuntu
       run: |
         echo "EXECUTABLE=rust-release" >> $GITHUB_ENV
+        echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
         ls -la
         ls -la target/release
-
-    - id: get_release_info
-      run: |
-        value=`cat release_url.txt`
-        echo ::set-output name=upload_url::$value
+        echo ::set-output name=upload_url::%RELEASE_URL%
 
     - run: echo ${EXECUTABLE}
 
@@ -100,6 +101,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: "${{ steps.get_release_info.outputs.upload_url }}"
-        asset_path: target/release/${EXECUTABLE}
-        asset_name: ${{matrix.os}}/${EXECUTABLE}
-        asset_content_type: application/zip
+        asset_path: "target/release/${EXECUTABLE}"
+        asset_name: "${{matrix.os}}/${EXECUTABLE}"
+        asset_content_type: application/octet-stream
