@@ -17,7 +17,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Get version
-      run: "echo ::set-output name=ZOWE2_VERSION::$(cargo pkgid | cut -d# -f2 | cut -d: -f2)"
+      run: "echo ::set-output name=ZOWEX_VERSION::$(cargo pkgid | cut -d# -f2 | cut -d: -f2)"
       id: get-version
 
     - name: Create Release
@@ -26,8 +26,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ steps.get-version.outputs.ZOWE2_VERSION }}
-        release_name: Release ${{ steps.get-version.outputs.ZOWE2_VERSION }}
+        tag_name: ${{ steps.get-version.outputs.ZOWEX_VERSION }}
+        release_name: Release ${{ steps.get-version.outputs.ZOWEX_VERSION }}
         body: |
           Changes in this Release
           - First Change
@@ -72,21 +72,17 @@ jobs:
     - name: Build
       run: cargo build --verbose --release
 
-    # - name: List
-    #   run: ls -la target/release
-
     - name: Name Executable (Windows)
       if: matrix.os == 'windows-latest'
       run: |
         echo "EXECUTABLE=rust-release.exe" >> $GITHUB_ENV
-        echo "RELEASE_URL=$(type release_url.txt)" >> $GITHUB_ENV
+        dir
         dir target\release
 
     - name: Name Executable (Non-Windows)
       if: matrix.os != 'windows-latest'
       run: |
         echo "EXECUTABLE=rust-release" >> $GITHUB_ENV
-        echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
         ls -la
         ls -la target/release
 
@@ -96,10 +92,6 @@ jobs:
         echo ::set-output name=upload_url::$value
 
     - run: echo ${EXECUTABLE}
-    - run: echo ${RELEASE_URL}
-
-    - name: Zip
-      run: zip -r --junk-paths zowe2.zip target/release/
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -108,6 +100,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: "${{ steps.get_release_info.outputs.upload_url }}"
-        asset_path: ./zowe2.zip
-        asset_name: ${{ matrix.os }}-zowe2.zip
+        asset_path: target/release/${EXECUTABLE}
+        asset_name: ${{matrix.os}}/${EXECUTABLE}
         asset_content_type: application/zip
