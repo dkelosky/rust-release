@@ -91,6 +91,7 @@ jobs:
         ls -la target/release
 
     - run: echo ${EXECUTABLE}
+    - run: echo ${RELEASE_URL}
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -99,6 +100,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: $RELEASE_URL
-        asset_path: target\release\rust-release.exe
+        asset_path: ./target/release/rust-release
         asset_name: rust-release
         asset_content_type: application/octet-stream
