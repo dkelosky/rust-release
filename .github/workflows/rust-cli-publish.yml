@@ -72,6 +72,9 @@ jobs:
     - name: Build
       run: cargo build --verbose --release
 
+    - name: List
+      run: ls -la target/release
+
     - name: Name Executable (Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -85,6 +88,8 @@ jobs:
         echo "EXECUTABLE=rust-release" >> $GITHUB_ENV
         echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
         ls -la
+
+    - run: echo ${EXECUTABLE}
 
     - name: Upload Release Asset
       id: upload-release-asset
