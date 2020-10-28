@@ -78,7 +78,6 @@ jobs:
       run: echo "::set-output name=upload_url::$(cat release_url.txt)"
 
     - name: Set Executable name
-      if: $${{ matrix.os }} == windows-latest
       run: |
         echo "EXECUTABLE=rust-release" >> $GITHUB_ENV
         echo "EXECUTABLE_PATH=target/release/rust-release" >> $GITHUB_ENV
@@ -89,6 +88,11 @@ jobs:
 
     - run: echo ${{ steps.get_upload_url.outputs.upload_url }}
 
+    - name: Create Archive
+      run: |
+        cd target/release
+        tar -cvzf rust-release.tgz rust-release
+
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
@@ -96,8 +100,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
-        asset_path: target/release/rust-release
-        asset_name: "${{matrix.os}}/rust-release"
+        asset_path: target/release/rust-release.tgz
+        asset_name: "${{matrix.os}}/rust-release.tgz"
         asset_content_type: application/octet-stream
 
 
@@ -127,16 +131,20 @@ jobs:
       run: echo "::set-output name=upload_url::$(type release_url.txt)"
 
     - name: Set Executable name
-      if: $${{ matrix.os }} == windows-latest
       run: |
         echo "EXECUTABLE=rust-release" >> $GITHUB_ENV
         echo "EXECUTABLE_PATH=target/release/rust-release" >> $GITHUB_ENV
 
     - run: |
-        echo $EXECUTABLE
-        echo $EXECUTABLE_PATH
+        echo %EXECUTABLE%
+        echo %EXECUTABLE_PATH%
 
     - run: echo "${{ steps.get_upload_url.outputs.upload_url }}"
+
+    - name: Create Archive
+      run: |
+        cd target/release
+        tar -cvzf rust-release.tgz rust-release.exe
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -145,6 +153,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
-        asset_path: target\release\rust-release.exe
-        asset_name: ${{matrix.os}}/rust-release.exe
+        asset_path: target\release\rust-release.tgz
+        asset_name: "${{matrix.os}}/rust-release.tgz"
         asset_content_type: application/octet-stream
