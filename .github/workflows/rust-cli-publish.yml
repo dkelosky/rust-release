@@ -53,7 +53,7 @@ jobs:
           !.git
 
   build-ubuntu-mac:
-    name: test
+    name: Build Ubuntu & Mac
 
     needs: release
 
@@ -73,20 +73,11 @@ jobs:
     - name: Build
       run: cargo build --verbose --release
 
-    - name: Name Executable
-      id: get_release_info
-      run: |
-        echo "EXECUTABLE=rust-release" >> $GITHUB_ENV
-        echo "EXECUTABLE_PATH=target/release/rust-release" >> $GITHUB_ENV
-        echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
-        ls -la
-        ls -la target/release
-        echo "::set-output name=upload_url::$(cat release_url.txt)"
+    - name: Get Upload URL
+      id: get_upload_url
+      run: echo "::set-output name=upload_url::$(cat release_url.txt)"
 
-    - run: echo $EXECUTABLE
-    - run: echo $EXECUTABLE_PATH
-    - run: echo $RELEASE_URL
-    - run: echo ${{ steps.get_release_info.outputs.upload_url }}
+    - run: echo ${{ steps.get_upload_url.outputs.upload_url }}
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -94,17 +85,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+        upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
         asset_path: target/release/rust-release
         asset_name: "${{matrix.os}}/rust-release"
         asset_content_type: application/octet-stream
 
 
   build-windows:
-    name: test
+    name: Build Windows
 
     needs: release
-
 
     runs-on: ${{ matrix.os }}
 
@@ -122,21 +112,11 @@ jobs:
     - name: Build
       run: cargo build --verbose --release
 
-    - name: Name Executable
-      id: get_release_info
-      shell: cmd
-      run: |
-        echo "EXECUTABLE=rust-release.exe" >> $GITHUB_ENV
-        echo "EXECUTABLE_PATH=target\release\rust-release.exe" >> $GITHUB_ENV
-        echo "RELEASE_URL=$(type release_url.txt)" >> $GITHUB_ENV
-        dir
-        dir target\release
-        echo ::set-output name=upload_url::%RELEASE_URL%
+    - name: Get Upload URL
+      id: get_upload_url
+      run: echo "::set-output name=upload_url::$(type release_url.txt)"
 
-    - run: echo %EXECUTABLE%
-    - run: echo %EXECUTABLE_PATH%
-    - run: echo %RELEASE_URL%
-    - run: echo "${{ steps.get_release_info.outputs.upload_url }}"
+    - run: echo "${{ steps.get_upload_url.outputs.upload_url }}"
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -144,7 +124,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+        upload_url: ${{ steps.get_upload_url.outputs.upload_url }}
         asset_path: target\release\rust-release.exe
         asset_name: ${{matrix.os}}/rust-release.exe
         asset_content_type: application/octet-stream
