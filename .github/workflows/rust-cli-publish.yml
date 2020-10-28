@@ -81,12 +81,12 @@ jobs:
         echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
         ls -la
         ls -la target/release
-        echo "::set-output name=upload_url::$RELEASE_URL"
+        echo "::set-output name=upload_url::$(cat release_url.txt)"
 
     - run: echo $EXECUTABLE
     - run: echo $EXECUTABLE_PATH
     - run: echo $RELEASE_URL
-    - run: echo "${{ steps.get_release_info.outputs.upload_url }}"
+    - run: echo ${{ steps.get_release_info.outputs.upload_url }}
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -104,6 +104,7 @@ jobs:
     name: test
 
     needs: release
+
 
     runs-on: ${{ matrix.os }}
 
@@ -123,13 +124,14 @@ jobs:
 
     - name: Name Executable
       id: get_release_info
+      shell: cmd
       run: |
         echo "EXECUTABLE=rust-release.exe" >> $GITHUB_ENV
         echo "EXECUTABLE_PATH=target\release\rust-release.exe" >> $GITHUB_ENV
         echo "RELEASE_URL=$(type release_url.txt)" >> $GITHUB_ENV
         dir
         dir target\release
-        echo "::set-output name=upload_url::$RELEASE_URL"
+        echo ::set-output name=upload_url::%RELEASE_URL%
 
     - run: echo %EXECUTABLE%
     - run: echo %EXECUTABLE_PATH%
