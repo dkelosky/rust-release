@@ -86,6 +86,7 @@ jobs:
     - run: echo $EXECUTABLE
     - run: echo $EXECUTABLE_PATH
     - run: echo $RELEASE_URL
+    - run: echo "${{ steps.get_release_info.outputs.upload_url }}"
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -93,9 +94,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: "${{ steps.get_release_info.outputs.upload_url }}"
-        asset_path: "$EXECUTABLE_PATH"
-        asset_name: "${{matrix.os}}/${EXECUTABLE}"
+        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+        asset_path: target/release/rust-release
+        asset_name: "${{matrix.os}}/rust-release"
         asset_content_type: application/octet-stream
 
 
@@ -133,6 +134,7 @@ jobs:
     - run: echo %EXECUTABLE%
     - run: echo %EXECUTABLE_PATH%
     - run: echo %RELEASE_URL%
+    - run: echo "${{ steps.get_release_info.outputs.upload_url }}"
 
     - name: Upload Release Asset
       id: upload-release-asset
@@ -140,7 +142,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: "${{ steps.get_release_info.outputs.upload_url }}"
-        asset_path: "%EXECUTABLE_PATH%"
-        asset_name: ${{matrix.os}}/%EXECUTABLE%
+        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+        asset_path: target\release\rust-release.exe
+        asset_name: ${{matrix.os}}/rust-release.exe
         asset_content_type: application/octet-stream
