@@ -81,7 +81,7 @@ jobs:
         echo "RELEASE_URL=$(cat release_url.txt)" >> $GITHUB_ENV
         ls -la
         ls -la target/release
-        echo ::set-output name=upload_url::$RELEASE_URL
+        echo "::set-output name=upload_url::$RELEASE_URL"
 
     - run: echo $EXECUTABLE
     - run: echo $EXECUTABLE_PATH
@@ -128,7 +128,7 @@ jobs:
         echo "RELEASE_URL=$(type release_url.txt)" >> $GITHUB_ENV
         dir
         dir target\release
-        echo ::set-output name=upload_url::%RELEASE_URL%
+        echo "::set-output name=upload_url::$RELEASE_URL"
 
     - run: echo %EXECUTABLE%
     - run: echo %EXECUTABLE_PATH%
